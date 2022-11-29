@@ -19,19 +19,18 @@ opts.add_argument('''user-agent = Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_4
                                       AppleWebKit/537.36 (KHTML, like Gecko)
                                       Chrome/81.0.4044.92 Safari/537.36''')
 
-driver = webdriver.Chrome(executable_path= os.getcwd() + r"\chromedriver", options=opts)
+driver = webdriver.Chrome(executable_path=r"/Users/Demetrick/Desktop/chromedriver", options=opts)
 
 def get_gas():
     url = "https://myaccount.enbridgegas.com/Sign-In"
 
     driver.get(url)
-    
-    #logs in 
+
     driver.find_element(By.ID,"signin-username").send_keys(os.getenv('UTIL_EMAIL')) 
     driver.find_element(By.ID,"signin-password").send_keys(os.getenv('UTIL_PASSWORD'))
     driver.find_element(By.ID,"signin-password").send_keys(Keys.RETURN)
 
-    #clicks the pop up
+
     WebDriverWait(driver, 10).until(
         EC.element_to_be_clickable((By.ID, "cancelNotification"))).click()
    
@@ -61,5 +60,4 @@ def get_electricity():
     return float(num.replace('$', ''))
 
 if __name__ == "__main__":
-    print(get_gas())
     print(get_electricity())
