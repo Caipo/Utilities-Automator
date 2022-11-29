@@ -13,8 +13,8 @@ from web_scrape import get_electricity, get_gas
 
 load_dotenv()
 
-gas = 1 #get_gas()
-electricity = 1 #get_electricity()
+gas = get_gas()
+electricity = get_electricity()
 internet = 45
 utils_total = internet + gas + electricity
 upstairs_fraction =  0.22
