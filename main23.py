@@ -10,16 +10,14 @@ from openpyxl import load_workbook
 from messages import get_message
 from web_scrape import get_electricity, get_gas
 
-
 load_dotenv()
 
 gas = get_gas()
 electricity = get_electricity()
 internet = 45
 utils_total = internet + gas + electricity
-upstairs_fraction =  0.22
-downstairs_fraction = 0.17
-
+upstairs_fraction =  0.25
+downstairs_fraction = 0.25
 email_password  = os.getenv("EMAIL_PASSWORD")
 
 def main():
@@ -27,11 +25,11 @@ def main():
     # Varibles to be used later
    
     today = date.today()
-    renters = [upstairs_a := Renter('philyclements@outlook.com', 1300, 'Philip', True),
-               upstairs_b := Renter('nicholas.scott.demetrick@gmail.com', 1300, 'Nick', True),
-               #downstairs_a := Renter('don2xu@gmail.com', 1350, 'philip', True),
-               #downstairs_b := Renter('zmxnfg@gmail.com', 1300, 'nick', True),
-               master := Renter('sam.chow24@gmail.com', 1500, 'Shiva', True)
+    renters = [#upstairs_a := Renter(os.getenv("58_UPSTAIR_AEMAIL"), 1300, os.getenv("58_UPSTAIR_A"), True),
+               #upstairs_b := Renter(os.getenv("58_UPSTAIR_BEMAIL"), 1300, os.getenv("58_UPSTAIR_B"), True),
+               downstairs_a := Renter(os.getenv("23_DOWNSTAIRS_AEMAIL"), 1350, os.getenv("23_DOWNSTAIRS_A"), True),
+               downstairs_b := Renter(os.getenv("23_DOWNSTAIRS_AEMAIL"), 1300, os.getenv("23_DOWNSTAIRS_B"), True),
+               master := Renter(os.getenv("58_UPSTAIR_MSTREMAIL"), 1500, os.getenv("58_UPSTAIR_MSTR"), True)
               ]
               
     # This will add an entry to bills.csv
@@ -41,11 +39,11 @@ def main():
         electricity,
         internet,
 	    utils_total,
-	    upstairs_a.total, 
-	    upstairs_b.total,
-	    #downstairs_a.total,
-	    #downstairs_b.total,
-        master.total
+	    #upstairs_a.total, 
+	    #upstairs_b.total,
+	    downstairs_a.total,
+	    downstairs_b.total,
+        #master.total
         ]], 
 	    'bills.xlsx')
     
@@ -56,9 +54,7 @@ def main():
         if input(f'Send email to {renter.name}: ') == 'y':
             message = get_message(renter, gas, electricity, internet,
                                 upstairs_fraction, downstairs_fraction)
-
             email(renter.email, message)
-    
     print('done')
 
 
