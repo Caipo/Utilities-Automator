@@ -23,11 +23,9 @@ driver = webdriver.Chrome(executable_path=r"/Users/Demetrick/Desktop/chromedrive
 
 def get_gas():
     url = "https://myaccount.enbridgegas.com/Sign-In"
-
     driver.get(url)
-
-    driver.find_element(By.ID,"signin-username").send_keys(os.getenv('UTIL_EMAIL')) 
-    driver.find_element(By.ID,"signin-password").send_keys(os.getenv('UTIL_PASSWORD'))
+    driver.find_element(By.ID,"signin-username").send_keys(os.getenv('58_UTIL_EMAIL')) 
+    driver.find_element(By.ID,"signin-password").send_keys(os.getenv('58_UTIL_PASSWORD'))
     driver.find_element(By.ID,"signin-password").send_keys(Keys.RETURN)
 
 
@@ -47,7 +45,7 @@ def get_electricity():
 
     driver.get(url)
     driver.find_element(By.ID,"accessEmail").send_keys(os.getenv('ACCOUNT_NUMBER'))
-    driver.find_element(By.ID,"password1").send_keys(os.getenv('UTIL_PASSWORD'))
+    driver.find_element(By.ID,"password1").send_keys(os.getenv('58_`UTIL_PASSWORD'))
     driver.find_element(By.ID,"password1").send_keys(Keys.RETURN)
     
     soup = BeautifulSoup(driver.page_source, 'html.parser')
