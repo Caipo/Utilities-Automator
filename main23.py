@@ -4,6 +4,7 @@ import smtplib
 from datetime import date
 from email.message import EmailMessage
 
+
 from dotenv import load_dotenv
 from openpyxl import load_workbook
 
