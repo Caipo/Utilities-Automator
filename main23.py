@@ -9,12 +9,12 @@ from dotenv import load_dotenv
 from openpyxl import load_workbook
 
 from messages import get_message
-from web_scrape import get_electricity, get_gas
+from web_scrape import get_electricity, get_gas, get_hydro
 
 load_dotenv()
 
 gas = get_gas()
-electricity = get_electricity()
+electricity = get_hydro()
 internet = 45
 utils_total = internet + gas + electricity
 upstairs_fraction =  0.25

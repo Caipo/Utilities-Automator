@@ -21,7 +21,7 @@ opts.add_argument('''user-agent = Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_4
 
 driver = webdriver.Chrome(executable_path=r"/Users/Demetrick/Desktop/chromedriver", options=opts)
 
-def get_gas():
+def get_gas(user_name, password):
     url = "https://myaccount.enbridgegas.com/Sign-In"
     driver.get(url)
     driver.find_element(By.ID,"signin-username").send_keys(os.getenv('58_UTIL_EMAIL')) 
@@ -40,12 +40,23 @@ def get_gas():
 
     return float(num.replace('$', ''))
 
+
+def get_hydro():
+    url= "https://www.torontohydro.com/log-in"
+    driver.get(url)
+    driver.find_element(By.ID,"email").send_keys(os.getenv('58_UTIL_EMAIL'))
+    driver.find_element(By.ID,"password").send_keys(os.getenv('58_UTIL_PASSWORD'))
+    driver.find_element(By.ID,"password").send_keys(Keys.RETURN)
+    driver.get('https://www.torontohydro.com/my-account/bills-and-payments')
+    soup = BeautifulSoup(driver.page_source, 'html.parser')
+    return float(soup.find('tr', class_='type-bill').find(class_='text-right').text.strip().replace('$', ''))
+
 def get_electricity():
     url = "https://myaccount.alectrautilities.com/app/capricorn?para=index"
 
     driver.get(url)
     driver.find_element(By.ID,"accessEmail").send_keys(os.getenv('ACCOUNT_NUMBER'))
-    driver.find_element(By.ID,"password1").send_keys(os.getenv('58_`UTIL_PASSWORD'))
+    driver.find_element(By.ID,"password1").send_keys(os.getenv('58_UTIL_PASSWORD'))
     driver.find_element(By.ID,"password1").send_keys(Keys.RETURN)
     
     soup = BeautifulSoup(driver.page_source, 'html.parser')
@@ -58,4 +69,4 @@ def get_electricity():
     return float(num.replace('$', ''))
 
 if __name__ == "__main__":
-    print(get_electricity())
+    print(get_hydro())
