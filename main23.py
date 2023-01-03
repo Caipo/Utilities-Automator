@@ -13,7 +13,7 @@ from web_scrape import get_electricity, get_gas, get_hydro
 
 load_dotenv()
 
-gas = get_gas()
+gas = get_gas('23')
 electricity = get_hydro()
 internet = 45
 utils_total = internet + gas + electricity
@@ -26,11 +26,11 @@ def main():
     # Varibles to be used later
    
     today = date.today()
-    renters = [#upstairs_a := Renter(os.getenv("58_UPSTAIR_AEMAIL"), 1300, os.getenv("58_UPSTAIR_A"), True),
-               #upstairs_b := Renter(os.getenv("58_UPSTAIR_BEMAIL"), 1300, os.getenv("58_UPSTAIR_B"), True),
-               downstairs_a := Renter(os.getenv("23_DOWNSTAIRS_AEMAIL"), 1350, os.getenv("23_DOWNSTAIRS_A"), True),
-               downstairs_b := Renter(os.getenv("23_DOWNSTAIRS_AEMAIL"), 1300, os.getenv("23_DOWNSTAIRS_B"), True),
-               master := Renter(os.getenv("58_UPSTAIR_MSTREMAIL"), 1500, os.getenv("58_UPSTAIR_MSTR"), True)
+    renters = [upstairs_a := Renter(os.getenv("58_UPSTAIRS_AEMAIL"), 1300, os.getenv("58_UPSTAIRS_A"), True),
+               #upstairs_b := Renter(os.getenv("58_UPSTAIRS_BEMAIL"), 1300, os.getenv("58_UPSTAIRS_B"), True),
+               downstairs_a := Renter(os.getenv("23_DOWNSTAIRS_AEMAIL"), 1300, os.getenv("23_DOWNSTAIRS_A"), True),
+               downstairs_b := Renter(os.getenv("23_DOWNSTAIRS_BEMAIL"), 1300, os.getenv("23_DOWNSTAIRS_B"), True),
+               #master := Renter(os.getenv("58_UPSTAIR_MSTREMAIL"), 1500, os.getenv("58_UPSTAIR_MSTR"), True)
               ]
               
     # This will add an entry to bills.csv
@@ -40,13 +40,13 @@ def main():
         electricity,
         internet,
 	    utils_total,
-	    #upstairs_a.total, 
-	    #upstairs_b.total,
+	    upstairs_a.total, 
+	    # upstairs_b.total,
 	    downstairs_a.total,
 	    downstairs_b.total,
-        #master.total
+        # master.total
         ]], 
-	    'bills.xlsx')
+	    '23bills.xlsx')
     
     # This will go through all the renters and send an email.
     
@@ -76,10 +76,12 @@ class Renter():
 def email(to, content):
     global email_password 
     user = os.getenv("EMAIL_ADDRESS")
+    frm = os.getenv("FROM_ADDRESS")
     try:
         smtp_server = smtplib.SMTP_SSL('smtp.gmail.com', 465)
         smtp_server.ehlo()
         smtp_server.login(user, email_password)
+        content = 'To:' + to + '\n' + 'From: ' + frm + '\n' + content
         smtp_server.sendmail(user, to, content)
         smtp_server.close()
         print ("Email sent successfully!")

@@ -12,12 +12,12 @@ from web_scrape import get_electricity, get_gas
 
 load_dotenv()
 
-gas = get_gas()
+gas = get_gas('58')
 electricity = get_electricity()
 internet = 45
 utils_total = internet + gas + electricity
-upstairs_fraction =  0.22
-downstairs_fraction = 0.17
+upstairs_fraction =  0.25
+downstairs_fraction = 0.20
 email_password  = os.getenv("EMAIL_PASSWORD")
 
 def main():
@@ -27,8 +27,8 @@ def main():
     today = date.today()
     renters = [upstairs_a := Renter(os.getenv("58_UPSTAIRS_AEMAIL"), 1300, os.getenv("58_UPSTAIRS_A"), True),
                upstairs_b := Renter(os.getenv("58_UPSTAIRS_BEMAIL"), 1300, os.getenv("58_UPSTAIRS_B"), True),
-               #downstairs_a := Renter('don2xu@gmail.com', 1350, 'philip', True),
-               #downstairs_b := Renter('zmxnfg@gmail.com', 1300, 'nick', True),
+               downstairs_a := Renter(os.getenv("58_DOWNSTAIRS_AEMAIL"), 1150, os.getenv("58_DOWNSTAIRS_A"), True),
+               downstairs_b := Renter(os.getenv("58_DOWNSTAIRS_BEMAIL"), 1200, os.getenv("58_DOWNSTAIRS_B"), True),
                master := Renter(os.getenv("58_UPSTAIRS_MSTREMAIL"), 1500, os.getenv("58_UPSTAIRS_MSTR"), True)
               ]
               
@@ -41,11 +41,11 @@ def main():
 	    utils_total,
 	    upstairs_a.total, 
 	    upstairs_b.total,
-	    #downstairs_a.total,
-	    #downstairs_b.total,
+	    downstairs_a.total,
+	    downstairs_b.total,
         master.total
         ]], 
-	    'bills.xlsx')
+	    '58bills.xlsx')
     
     # This will go through all the renters and send an email.
     
@@ -77,10 +77,12 @@ class Renter():
 def email(to, content):
     global email_password 
     user = os.getenv("EMAIL_ADDRESS")
+    frm = os.getenv("FROM_ADDRESS")
     try:
         smtp_server = smtplib.SMTP_SSL('smtp.gmail.com', 465)
         smtp_server.ehlo()
         smtp_server.login(user, email_password)
+        content = 'To:' + to + '\n' + 'From: ' + frm + '\n' + content
         smtp_server.sendmail(user, to, content)
         smtp_server.close()
         print ("Email sent successfully!")

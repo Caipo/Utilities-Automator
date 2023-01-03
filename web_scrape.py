@@ -1,4 +1,7 @@
 from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.chrome.service import Service
+from webdriver_manager.chrome import ChromeDriverManager
 import requests
 from bs4 import BeautifulSoup
 import pdb
@@ -13,28 +16,43 @@ import os
 
 load_dotenv()
 
-opts = webdriver.ChromeOptions()
-opts.add_argument('''user-agent = Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_4)
+# opts = webdriver.ChromeOptions()
 
+opts = Options()
+opts.add_argument('''user-agent = Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_4)
                                       AppleWebKit/537.36 (KHTML, like Gecko)
                                       Chrome/81.0.4044.92 Safari/537.36''')
+opts.add_argument("start-maximized", )
+opts.add_experimental_option('excludeSwitches', ['enable-logging'])
+driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=opts)
 
-driver = webdriver.Chrome(executable_path=r"/Users/Demetrick/Desktop/chromedriver", options=opts)
-
-def get_gas(user_name, password):
-    url = "https://myaccount.enbridgegas.com/Sign-In"
+def get_gas(address):
+    url = "https://enbridgegas.okta.com/login/login.htm?"
     driver.get(url)
-    driver.find_element(By.ID,"signin-username").send_keys(os.getenv('58_UTIL_EMAIL')) 
-    driver.find_element(By.ID,"signin-password").send_keys(os.getenv('58_UTIL_PASSWORD'))
-    driver.find_element(By.ID,"signin-password").send_keys(Keys.RETURN)
-
+    if address == '58':
+        driver.find_element(By.ID,"okta-signin-username").send_keys(os.getenv('58_UTIL_EMAIL')) 
+        driver.find_element(By.ID,"okta-signin-password").send_keys(os.getenv('58_UTIL_PASSWORD'))
+    else:
+        driver.find_element(By.ID,"okta-signin-username").send_keys(os.getenv('23_UTIL_EMAIL')) 
+        driver.find_element(By.ID,"okta-signin-password").send_keys(os.getenv('58_UTIL_PASSWORD'))
+    driver.find_element(By.ID,"okta-signin-password").send_keys(Keys.RETURN)
+    time.sleep(3)
+    driver.get('https://myaccount.enbridgegas.com/my-account/my-bill')
+    #time.sleep(3)
+    WebDriverWait(driver, 10).until(
+        EC.element_to_be_clickable((By.XPATH, "/html/body/div[3]/div/div/div/div/div/div[3]/div[2]/div[1]/div/div/form/fieldset/button"))).click()
 
     WebDriverWait(driver, 10).until(
+        EC.element_to_be_clickable((By.ID, "btnSkipMFA"))).click()
+    
+    WebDriverWait(driver, 10).until(
         EC.element_to_be_clickable((By.ID, "cancelNotification"))).click()
-   
-    path = r'/html/body/div[3]/div/div/div/div/div/div[1]/div/div/div/div/div/div/div/div[2]/section[1]/div/div[2]/div/div/div/div[2]/div/div[1]/div[1]/div/div[2]/div/div/b'
-    WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.XPATH, path)))
 
+    # path = r'/html/body/div[3]/div/div/div/div/div/div[3]/div[2]/div[1]/div/div/form/fieldset/button'
+    # WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.XPATH, path)))
+    
+    time.sleep(1)
+    
     soup = BeautifulSoup(driver.page_source, 'html.parser')
     num = soup.find_all('div', {'class' : r'gas-uasge-details' })[1].find('b').text
 
@@ -69,4 +87,4 @@ def get_electricity():
     return float(num.replace('$', ''))
 
 if __name__ == "__main__":
-    print(get_hydro())
+    print(get_gas())
