@@ -1,4 +1,5 @@
 from datetime import date
+from email.message import EmailMessage
 
 def get_message(renter, gas, electricity, internet, upstairs_fraction, downstairs_fraction):
     today = date.today()
@@ -9,7 +10,8 @@ def get_message(renter, gas, electricity, internet, upstairs_fraction, downstair
         fraction = downstairs_fraction
 
     subject = str(today.strftime("%B")) + ' rent is $' + str(renter.total)
-    message = ''
+    message = EmailMessage()
+    message['To']=renter.email
     match today.strftime('%B'):
         case 'September':
             pass
@@ -20,20 +22,28 @@ def get_message(renter, gas, electricity, internet, upstairs_fraction, downstair
         case 'December': message = f'''Subject: {subject}\n\nHey {renter.name},
             \nMerry Christmas!
             '''
+    message['Subject']=subject
 
-    message += f'''\n\nJust wanted to share the utilities breakdown for last month.
+    message.set_content(f'''\n\n
+  <html>
+    <head></head>
+    <body>
+        <p>Just wanted to share the utilities breakdown for last month.</p>
+                        
 
-    Gas: {int(fraction * gas)} 
-    Electricity: {int(fraction * electricity)}
-    Internet: {int(fraction * internet)}
-    Total: {int(fraction * (gas + internet + electricity))} 
+    <p>Gas: {int(fraction * gas)} </p>
+    <p>Electricity: {int(fraction * electricity)}</p>
+    <p>Internet: {int(fraction * internet)}</p>
+    <p>Total: {int(fraction * (gas + internet + electricity))} </p>
     
-So total payable is {int(renter.total)}. Please etransfer the amount to don2xu@gmail.com
+    <p>So total payable is {int(renter.total)}. Please etransfer the amount to don2xu@gmail.com</p>
 
-Let me know if you have any questions.
+    <p>Let me know if you have any questions.</p>
 
-Cheers, 
-Don'''
+    <p>Cheers, </p>
+    <p>Don</p>
+  </body>
+</html>''')
     return message
 
 # Base Rent: {int(renter.rent)} # Returns base rent
