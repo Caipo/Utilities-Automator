@@ -55,7 +55,7 @@ def main():
         if input(f'Send email to {renter.name}: ') == 'y':
             message = get_message(renter, gas, electricity, internet,
                                 upstairs_fraction, downstairs_fraction)
-            email(renter.email, message)
+            email(message)
     print('done')
 
 
@@ -73,14 +73,14 @@ class Renter():
             self.total = int(rent + downstairs_fraction * utils_total) 
 
 
-def email(to, content):
+def email(message):
     global email_password 
     user = os.getenv("EMAIL_ADDRESS")
     try:
         smtp_server = smtplib.SMTP_SSL('smtp.gmail.com', 465)
         smtp_server.ehlo()
         smtp_server.login(user, email_password)
-        smtp_server.sendmail(user, to, content)
+        smtp_server.send_message(message)
         smtp_server.close()
         print ("Email sent successfully!")
 
