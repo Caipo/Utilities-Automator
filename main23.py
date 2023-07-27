@@ -55,7 +55,7 @@ def main():
         if input(f'Send email to {renter.name}: ') == 'y':
             message = get_message(renter, gas, electricity, internet,
                                 upstairs_fraction, downstairs_fraction)
-            email(renter.email, message)
+            email(message)
     print('done')
 
 
